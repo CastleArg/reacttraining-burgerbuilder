@@ -1,5 +1,5 @@
-import React from 'react';
-import classes from './BurgerIngredient.css';
+import React, { Fragment } from 'react';
+import classes from './BurgerIngredient.module.css';
 import PropTypes from 'prop-types';
 const BurgerIngredient = (props) => {
     let ingredient = null;
@@ -7,14 +7,14 @@ const BurgerIngredient = (props) => {
         case ('bread-bottom'):
             ingredient = <div className={classes.BreadBottom}></div>;
             break;
-        case ('bread-bottom'):
-            ingredient = (
-                <div>
+        case ('bread-top'):
+            ingredient =
+                (<Fragment>
                     <div className={classes.BreadTop}>
                         <div className={classes.Seeds1} />
                         <div className={classes.Seeds2} />
                     </div>
-                </div>);
+                </Fragment>)
             break;
         case ('meat'):
             ingredient = <div className={classes.Meat}></div>
