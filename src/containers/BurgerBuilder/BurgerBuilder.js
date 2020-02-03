@@ -10,6 +10,7 @@ const INGREDIENT_PRICES = {
 const BurgerBuilder = (props) => {
     const [ingredients, setIngredients] = useState({ salad: 0, bacon: 0, cheese: 0, meat: 0 });
     const [price, setPrice] = useState(4);
+    const [purchaseable, setPurchaseable] = useState(false);
     const addIngredientHandler = (type) => {
         const newCount = ingredients[type] + 1;
         const newIngredients = { ...ingredients };
@@ -19,6 +20,7 @@ const BurgerBuilder = (props) => {
         const priceAddition = INGREDIENT_PRICES[type];
         const newPrice = price + priceAddition;
         setPrice(newPrice);
+        updatePurchaseState(newIngredients);
     };
     const removeIngredientHandler = (type) => {
         if (ingredients[type] <= 0) {
@@ -31,6 +33,16 @@ const BurgerBuilder = (props) => {
         const priceAddition = INGREDIENT_PRICES[type];
         const newPrice = price - priceAddition;
         setPrice(newPrice);
+        updatePurchaseState(newIngredients);
+    }
+
+    const updatePurchaseState = (newIngredients) => {
+        const sum = Object.keys(newIngredients)
+            .map(key => {
+                return newIngredients[key];
+            })
+            .reduce((a, b) => { return a + b }, 0)
+        setPurchaseable(sum > 0);
     }
     const disabledInfo = {
         ...ingredients
@@ -41,7 +53,14 @@ const BurgerBuilder = (props) => {
     return (
         <Fragment>
             <Burger ingredients={ingredients} />
-            <BuildControls disabled={disabledInfo} ingredientAdded={addIngredientHandler} ingredientRemoved={removeIngredientHandler} />
+            p: {String(purchaseable)}
+            <BuildControls
+                price={price}
+                disabled={disabledInfo}
+                ingredientAdded={addIngredientHandler}
+                ingredientRemoved={removeIngredientHandler}
+                purchaseable={purchaseable}
+            />
 
         </Fragment>);
 }
