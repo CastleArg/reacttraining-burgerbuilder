@@ -60,7 +60,7 @@ const BurgerBuilder = (props) => {
     return (
         <Fragment>
             <Modal show={purchasing} modalClosed={() => setPurchasing(false)}>
-                <OrderSummary purchaseContinued={purchaseContinueHandler} purchaseCancelled={() => setPurchasing(false)} ingredients={ingredients} />
+                <OrderSummary price={price} purchaseContinued={purchaseContinueHandler} purchaseCancelled={() => setPurchasing(false)} ingredients={ingredients} />
             </Modal>
             <Burger ingredients={ingredients} />
             <BuildControls
