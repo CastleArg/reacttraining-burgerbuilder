@@ -39,6 +39,10 @@ const BurgerBuilder = (props) => {
         updatePurchaseState(newIngredients);
     }
 
+    const purchaseContinueHandler = () => {
+        alert('purchase successful!!!!!!!!!!!!!!!!!!!');
+    }
+
     const updatePurchaseState = (newIngredients) => {
         const sum = Object.keys(newIngredients)
             .map(key => {
@@ -56,7 +60,7 @@ const BurgerBuilder = (props) => {
     return (
         <Fragment>
             <Modal show={purchasing} modalClosed={() => setPurchasing(false)}>
-                <OrderSummary ingredients={ingredients} />
+                <OrderSummary purchaseContinued={purchaseContinueHandler} purchaseCancelled={() => setPurchasing(false)} ingredients={ingredients} />
             </Modal>
             <Burger ingredients={ingredients} />
             <BuildControls
