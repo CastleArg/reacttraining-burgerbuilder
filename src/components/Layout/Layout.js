@@ -8,7 +8,7 @@ const Layout = (props) => {
     const [sideDrawerOpen, setSideDrawerOpen] = useState(true);
     return (
         <Fragment>
-            <Toolbar toggleSideDrawerOpen={() => setSideDrawerOpen(!sideDrawerOpen)} ></Toolbar>
+            <Toolbar toggleSideDrawerOpen={() => setSideDrawerOpen(x=> !x)} ></Toolbar>
             <SideDrawer show={sideDrawerOpen} closed={() => setSideDrawerOpen(false)} />
             <main className={classes.Content}>
                 {props.children}
