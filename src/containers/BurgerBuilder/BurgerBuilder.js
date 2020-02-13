@@ -3,6 +3,8 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from '../../axios-orders';
+import Spinner from '../../components/UI/Spinner/Spinner';
 const INGREDIENT_PRICES = {
     salad: 0.5,
     cheese: 0.4,
@@ -14,6 +16,8 @@ const BurgerBuilder = (props) => {
     const [price, setPrice] = useState(4);
     const [purchaseable, setPurchaseable] = useState(false);
     const [purchasing, setPurchasing] = useState(false);
+    const [loading, setLoading] = useState(false);
+    
     const addIngredientHandler = (type) => {
         const newCount = ingredients[type] + 1;
         const newIngredients = { ...ingredients };
@@ -40,7 +44,17 @@ const BurgerBuilder = (props) => {
     }
 
     const purchaseContinueHandler = () => {
-        alert('purchase successful!!!!!!!!!!!!!!!!!!!');
+        // alert('purchase successful!!!!!!!!!!!!!!!!!!!');
+        const order = { ingredients, price, customer: { name: 'Mark', address: { street: 'bob st', postCode: '0110' } } }
+        setLoading(true);
+        axios.post('/orders.json', order)
+            .catch(err => console.log('err!!!!!!!!!! ' + err))
+            .finally(() => {
+                setLoading(false);
+                setPurchasing(false);
+            });
+
+
     }
 
     const updatePurchaseState = (newIngredients) => {
@@ -56,6 +70,9 @@ const BurgerBuilder = (props) => {
     };
     for (let key in disabledInfo) {
         disabledInfo[key] = disabledInfo[key] <= 0;
+    }
+    if (loading) {
+        return <Spinner />
     }
     return (
         <Fragment>
