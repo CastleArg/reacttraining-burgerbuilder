@@ -5,7 +5,7 @@ import SideDrawer from '../Navigation/SideDrawer/SideDrawer';
 
 
 const Layout = (props) => {
-    const [sideDrawerOpen, setSideDrawerOpen] = useState(true);
+    const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
     return (
         <Fragment>
             <Toolbar toggleSideDrawerOpen={() => setSideDrawerOpen(x=> !x)} ></Toolbar>
