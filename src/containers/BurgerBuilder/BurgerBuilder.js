@@ -25,7 +25,7 @@ const BurgerBuilder = (props) => {
     useEffect(() => {
         setLoading(true);
         axios.get('/ingredients.json')
-            .then(x => { console.log(x); setIngredients(x.data); })
+            .then(x => { console.log(x); setIngredients(x.data); updatePurchaseState(x.data); })
             .catch(() => setError(true))
             .finally(() => setLoading(false));
     }, [])
@@ -55,18 +55,16 @@ const BurgerBuilder = (props) => {
         updatePurchaseState(newIngredients);
     }
 
-    const purchaseContinueHandler = () => {
-        // alert('purchase successful!!!!!!!!!!!!!!!!!!!');
-        const order = { ingredients, price, customer: { name: 'Mark', address: { street: 'bob st', postCode: '0110' } } }
-        setLoading(true);
-        axios.post('/orders.json', order)
-            .catch(err => console.log('err!!!!!!!!!! ' + err))
-            .finally(() => {
-                setLoading(false);
-                setPurchasing(false);
-            });
-
-
+    const purchaseContinueHandler = () => {   
+        const queryParams = [];
+        for (let i in ingredients) {
+            queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(ingredients[i]));
+        }
+        queryParams.push('price=' + encodeURIComponent(price));
+        props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryParams.join('&')
+        });
     }
 
     const updatePurchaseState = (newIngredients) => {
