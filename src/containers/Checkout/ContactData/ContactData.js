@@ -12,7 +12,12 @@ const ContactData = (props) => {
                 type: 'text',
                 placeholder: 'Your Name'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false,
+            touched: false
         },
         street: {
             elementType: 'input',
@@ -20,7 +25,12 @@ const ContactData = (props) => {
                 type: 'text',
                 placeholder: 'Street'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false,
+            touched: false
         },
         zipCode: {
             elementType: 'input',
@@ -28,7 +38,14 @@ const ContactData = (props) => {
                 type: 'text',
                 placeholder: 'Zip Code'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true,
+                minLength: 6,
+                maxLength: 12
+            },
+            valid: false,
+            touched: false
         },
         country: {
             elementType: 'input',
@@ -36,7 +53,12 @@ const ContactData = (props) => {
                 type: 'text',
                 placeholder: 'Country'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false,
+            touched: false
         },
         email: {
             elementType: 'input',
@@ -44,7 +66,12 @@ const ContactData = (props) => {
                 type: 'email',
                 placeholder: 'Your Email'
             },
-            value: ''
+            value: '',
+            validation: {
+                required: true
+            },
+            valid: false,
+            touched: false
         },
         deliveryMethod: {
             elementType: 'select',
@@ -52,17 +79,20 @@ const ContactData = (props) => {
                 options: [{ value: 'fastest', displayValue: 'Fastest' }, { value: 'cheapest', displayValue: 'Cheapest' }]
                 // placeholder: 'Your Name'
             },
-            value: ''
+            value: 'fastest',
+            valid: true
         },
-
-
     })
     const [loading, setLoading] = useState();
+    const [formIsValid, setFormIsValid] = useState(false);
     const orderHandler = (evt) => {
         evt.preventDefault();
-
-        const order = { ingredients: props.ingredients, price: props.price };// { ingredients, price, customer: { name: 'Mark', address: { street: 'bob st', postCode: '0110' } } }
         setLoading(true);
+        const formData = {};
+        for (let formElementIdentifier in orderForm) {
+            formData[formElementIdentifier] = orderForm[formElementIdentifier].value;
+        }
+        const order = { ingredients: props.ingredients, price: props.price, orderData: formData };
         axios.post('/orders.json', order)
             .then(props.history.push('/orders'))
             .catch(err => console.log('err!!!!!!!!!! ' + err))
@@ -72,14 +102,38 @@ const ContactData = (props) => {
 
     }
 
+    const checkValidity = (value, rules) => {
+        if (!rules) {
+            return true;
+        }
+        let isValid = false;
+        if (rules.required) {
+            isValid = value.trim() !== ''
+        }
+
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid;
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+        return isValid;
+    }
+
     const inputChangedHandler = (event, inputId) => {
-        console.log(event.target.value);
-        console.log(inputId);
         const updatedOrderForm = { ...orderForm }
         const updatedOrderFormElement = { ...updatedOrderForm[inputId] };
         updatedOrderFormElement.value = event.target.value;
+        updatedOrderFormElement.touched = true;
         updatedOrderForm[inputId] = updatedOrderFormElement;
+        updatedOrderForm[inputId].valid = checkValidity(updatedOrderFormElement.value, updatedOrderFormElement.validation);
         setOrderForm(updatedOrderForm);
+        let newFormIsValid = true;
+        for (let input in updatedOrderForm) {
+            newFormIsValid = updatedOrderForm[input].valid && newFormIsValid
+        }
+        setFormIsValid(newFormIsValid);
     }
     if (loading) {
         return <Spinner />
@@ -91,10 +145,18 @@ const ContactData = (props) => {
     return (
         <div className={classes.ContactData}>
             <h4>Contact details</h4>
-            <form>
+            <form onSubmit={orderHandler}>
                 {formELementsArray.map((element, i) => <Input
-                    key={i} elementType={element.config.elementType} elementConfig={element.config.elementConfig} value={element.config.value} changed={(e) => inputChangedHandler(e, element.id)} />)}
-                <Button clicked={orderHandler} btnType="Success">ORDER</Button>
+                    key={i} elementType={element.config.elementType}
+                    elementConfig={element.config.elementConfig}
+                    value={element.config.value}
+                    changed={(e) => inputChangedHandler(e, element.id)}
+                    isValid={element.config.valid}
+                    shouldValidate={element.config.validation}
+                    touched={element.config.touched}
+                />)}
+                <Button disabled={!formIsValid} btnType="Success">ORDER</Button>
+
             </form>
         </div>
     );
