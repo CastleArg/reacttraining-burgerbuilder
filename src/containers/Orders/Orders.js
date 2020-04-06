@@ -15,8 +15,8 @@ const Orders = (props) => {
                 setLoading(false);
 
             })
-            .catch(() => { }) //not having this cuses nast y unhandled error - even though error is being handled in wrapper.  Ascertain if we still need this on prod
-            .finally(() => console.log('yikes!'))
+            .catch(() => { console.log('yikes!')}) //not having this cuses nast y unhandled error - even though error is being handled in wrapper.  Ascertain if we still need this on prod
+            .finally(() => console.log('finished!') )
     }, []);
     if (loading) {
         return <Spinner />
